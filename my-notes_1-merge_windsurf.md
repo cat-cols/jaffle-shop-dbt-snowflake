@@ -23,10 +23,12 @@ search for 'github'
 delete all github related entries
 
 # branch
+git checkout -b <branch-name>
 git switch main
 git pull
-git switch -c feature/something
-
+git switch -c feature/<something>
+# First push of a new branch usually needs this:
+git push -u origin <branch-name>
 
 ```
 
@@ -1330,3 +1332,10 @@ git switch -c feature/something
 ```
 
 That ensures you branch from the freshest `main`.
+
+---
+---
+
+(venv) b@Brandons-iMac jaffle-shop-dbt-snowflake % git checkout -b c
+onfigure
+Switched to a new branch 'configure'
