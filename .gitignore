@@ -1,6 +1,48 @@
+<<<<<<< HEAD
 # you shouldn't commit these into source control
 # these are the default directory names, adjust/add to fit your needs
 target/
 dbt_packages/
 logs/
 dbt_internal_packages/
+=======
+# dbt artifacts (generated)
+target/
+dbt_modules/        # legacy name, still seen sometimes
+logs/
+
+# dbt packages (downloaded by `dbt deps`)
+dbt_packages/
+dbt_internal_packages/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.env/
+.vscode/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS/editor junk
+.DS_Store
+.vscode/
+
+# temp files/dirs
+*.tmp
+*.log
+*.csv
+tmp/
+temp/
+
+# temporary holds
+docs/_fixes/
+docs/assets/
+
+>>>>>>> 82efb32 (upload and merge?)

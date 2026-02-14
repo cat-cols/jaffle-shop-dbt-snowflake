@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Welcome to your new dbt project!
 
 ### Using the starter project
@@ -62,3 +63,19 @@ The fact that you are already troubleshooting **dbt Fusion** and checking `INFOR
 **My advice:** Finish the course to get the foundation, then immediately create a "Branch" or a new repo where you add one "advanced" feature (like a Incremental Model or a Macro) that wasn't in the tutorial.
 
 **Would you like me to help you brainstorm a "Bonus Feature" you could add to your Jaffle Shop project to make it look more impressive to a recruiter?**
+
+=======
+
+# 🥪 The Jaffle Shop 🦘
+
+_powered by the dbt Fusion engine_
+
+Welcome! This is a sandbox project for exploring the basic functionality of Fusion. It's based on a fictional restaurant called the Jaffle Shop that serves [jaffles](https://en.wikipedia.org/wiki/Pie_iron).
+
+To get started:
+1. Set up your database connection in `~/.dbt/profiles.yml`. If you got here by running `dbt init`, you should already be good to go.
+2. Run `dbt build`. That's it!
+
+> [!NOTE]
+> If you're brand-new to dbt, we recommend starting with the [dbt Learn](https://learn.getdbt.com/) platform. It's a free, interactive way to learn dbt, and it's a great way to get started if you're new to the tool.
+>>>>>>> 82efb32 (upload and merge?)
