@@ -22,6 +22,10 @@ open 'Keychain Access'
 search for 'github'
 delete all github related entries
 
+# branch
+git switch main
+git pull
+git switch -c feature/something
 
 
 ```
@@ -1251,7 +1255,8 @@ origin  git@github.com:cat-cols/jaffle-shop-dbt-snowflake.git (push)
 ## main...origin/main
 ```
 
-> **Q:** How do i create a branch?
+># **Q:** How do i create a branch?
+> 
 > To create a branch in Git, you’ve basically got two moves: **create** and (usually) **switch to it**.
 
 ## The modern, clean way
