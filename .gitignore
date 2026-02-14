@@ -23,6 +23,9 @@ ENV/
 .env/
 .vscode/
 
+# Credentials
+profiles.yml
+
 # Python cache
 __pycache__/
 *.py[cod]
