@@ -1,12 +1,30 @@
 # TLDR;
-
-- git init
-- git remote add origin https://github.com/cat-cols/jaffle-shop-dbt-snowflake.git
-- git remote -v
-- git pull origin main --rebase
+```py
+git init
+git remote add origin https://github.com/cat-cols/jaffle-shop-dbt-snowflake.git
+git remote -v
+git pull origin main --rebase
 - git push --set-upstream origin main
 - git push origin main --force
-  - ls -R
+- ls -R
+- git config http.postBuffer 524288000
+
+# remove other git account permanantly
+git config user.name "cat-cols"
+git config user.email "your-email-for-cat-cols@example.com"
+
+# purge account tokens from macOS Keychain
+git config --global credential.helper
+    #! osxkeychain
+press cmd+space to open 'spotlight'
+type 'keychain'
+open 'Keychain Access'
+search for 'github'
+delete all github related entries
+
+
+
+```
 
 ---
 ---
@@ -507,3 +525,562 @@ Look at your file tree on the left of Windsurf. It should look like a **standard
 If you just unstaged them, the files would still be sitting in the wrong place on your iMac. By moving them and using `git commit --amend`, you are essentially "erasing" the mistake from your GitHub history. To a recruiter, it will look like you did it perfectly the first time!
 
 **Does your Windsurf file tree look "flat" now (no more double folders)?** If it does, you're ready to go back to dbt Cloud and hit "Run."
+
+---
+---
+
+> **Q:** (venv) b@Brandons-iMac jaffle-shop-dbt-snowflake % git push origin main --force
+Enumerating objects: 81, done.
+Counting objects: 100% (81/81), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (76/76), done.
+Writing objects: 100% (81/81), 965.00 KiB | 17.23 MiB/s, done.
+Total 81 (delta 15), reused 0 (delta 0), pack-reused 0
+error: RPC failed; HTTP 400 curl 22 The requested URL returned error: 400
+send-pack: unexpected disconnect while reading sideband packet
+fatal: the remote end hung up unexpectedly
+Everything up-to-date
+
+---
+
+> **A:**
+
+---
+---
+
+> **Q:** Even though the repository is under my account "cat-cols", it keeps connecting to my Splinter6 account in windsurf. How can i completely disconnect that?
+
+---
+
+> **A**
+> This is a common headache when you have multiple GitHub identities on one machine. Your iMac is likely holding onto "Splinter6" credentials in the **macOS Keychain** or your **Git global config**, and it's trying to use those keys to open the door to "cat-cols".
+
+Here is how to scrub "Splinter6" and make "cat-cols" the boss of this project.
+
+### 1. Clear the macOS Keychain (The most likely culprit)
+
+macOS "helpfully" remembers your first GitHub login and tries to use it for everything.
+
+1. Press `Cmd + Space` and type **Keychain Access**.
+2. Search for `github.com`.
+3. Find any entries that mention **Splinter6** or just general **Internet password** entries for GitHub.
+4. **Right-click and Delete them.** Don't worry; Windsurf will just ask you to log in again with the correct account later.
+
+### 2. Check your Local Git Config
+
+Git can store a username inside the specific project folder. Let's make sure this folder is set to cat-cols.
+In your Windsurf terminal, run:
+
+```bash
+git config user.name "cat-cols"
+git config user.email "your-email-for-cat-cols@example.com"
+
+```
+
+*Note: This only changes the "label" on your commits, not the actual login permission.*
+
+### 3. Update the Remote URL
+
+Sometimes the "origin" URL itself contains the old username. Check it by running:
+
+```bash
+git remote -v
+
+```
+
+If you see `https://Splinter6@github.com/...`, you need to reset it:
+
+```bash
+git remote set-url origin https://github.com/cat-cols/jaffle-shop-dbt-snowflake.git
+
+```
+
+---
+
+### 4. The "Windsurf/VS Code" Account Sync
+
+Windsurf (being based on VS Code) has its own "Accounts" section.
+
+1. Look at the **bottom-left corner** of Windsurf for a small **Person Icon**.
+2. Click it. If it says "Splinter6", click **Sign Out**.
+3. Click it again and select **Sign in to Sync Settings** or **Sign in with GitHub** and use your **cat-cols** credentials.
+
+---
+
+### 5. If using SSH (The "Pro" Fix)
+
+If you are using SSH (URLs starting with `git@github.com`), your iMac is sending the "Splinter6" SSH key. To fix this, you'd need to check your `~/.ssh/config` file, but if you're using HTTPS (the `https://` URLs), the Keychain fix in **Step 1** usually does the trick.
+
+### Why this is happening
+
+Git uses a "Credential Manager." When you try to push to `cat-cols/jaffle-shop`, the manager says, "I have a key for GitHub! It belongs to Splinter6. I'll use that!" GitHub then looks at the key and says, "Splinter6 doesn't have permission to write to cat-cols' repository. Access Denied."
+
+**Once you delete the entry from the Keychain, try to `git push` again.** Windsurf should pop up a window asking you to "Sign in with GitHub." Make sure you sign in as **cat-cols**.
+
+**Did the Keychain search find any "Splinter6" entries?**
+
+> **Q**
+> (venv) b@Brandons-iMac jaffle-shop-dbt-snowflake % git remote -v
+origin  https://github.com/cat-cols/jaffle-shop-dbt-snowflake.git (fetch)
+origin  https://github.com/cat-cols/jaffle-shop-dbt-snowflake.git (push)
+
+> **A**
+>Since your `remote -v` looks correct (it's pointing to `cat-cols`), the "Splinter6" ghost is definitely living in your **macOS Keychain** or the **Windsurf/VS Code credential cache**.
+
+Because your last push failed with a "400 error" and a "disconnect," it's likely that GitHub is rejecting the push because your computer is silently handing over the Splinter6 "ID card" instead of the cat-cols one.
+
+### 1. The "Nuke the Credentials" Command
+
+Run this in your terminal. It tells Git to "forget" the current saved password for GitHub specifically for this session so it’s forced to ask you again:
+
+```bash
+git config --global --unset credential.helper
+
+```
+
+*(Note: You can turn it back on later, but this breaks the link to the wrong account.)*
+
+### 2. Force the Identity in the URL
+
+You can "trick" Git into asking for the right credentials by putting the username directly into the push command. Try this:
+
+```bash
+git push https://cat-cols@github.com/cat-cols/jaffle-shop-dbt-snowflake.git main --force
+
+```
+
+**What should happen:**
+A popup should appear (or a prompt in the terminal) asking for a password or **Personal Access Token (PAT)**.
+
+* **Do not use your GitHub password.**
+* You must use a **Personal Access Token** from your `cat-cols` GitHub settings (**Settings > Developer Settings > Personal Access Tokens > Tokens (classic)**).
+
+---
+
+### 3. Check Windsurf's "Cloud" Icon
+
+In the very bottom left of your Windsurf window:
+
+1. Click the **Accounts** icon (the little person).
+2. If it says **"Splinter6 (GitHub)"**, click it and select **Sign Out**.
+3. Click it again and select **Sign in with GitHub**.
+4. When your browser opens, ensure you are logged into the `cat-cols` account on GitHub.com before clicking "Authorize."
+
+---
+
+### Why the "400 Error" keeps happening
+
+GitHub returns a **400 Bad Request** or **403 Forbidden** when the credentials provided don't have "Write" access to the repository. Since `Splinter6` doesn't own the `cat-cols` repo, GitHub essentially hangs up the phone on the transfer, causing that "unexpected disconnect."
+
+### Summary Checklist:
+
+1. **Keychain Access:** Delete any entry for `github.com`.
+2. **Windsurf Account:** Sign out of Splinter6 in the bottom-left corner.
+3. **The Push:** Use the `cat-cols@github.com` command above.
+
+**Does a login popup appear when you run that specific `cat-cols@github.com` push command?**
+
+---
+---
+
+Yep. You’re basically dealing with **two different layers**:
+
+1. **Future commits (easy):** make sure every new commit uses the `cat-cols` identity.
+2. **Past history (optional, spicy):** if you already have commits authored as `splinter6`, you can rewrite history to purge/replace them.
+
+Also: **Windsurf** is mostly a UI on top of **git config + your credential manager**. So we’ll clean git, then clean credentials, then clean Windsurf’s own account linkage.
+
+---
+
+## 1) Force all future commits to use `cat-cols`
+
+### A) Check what Git thinks your identity is (global + local)
+
+Run these inside your repo:
+
+```bash
+git config --show-origin --get user.name
+git config --show-origin --get user.email
+
+git config --get user.name
+git config --get user.email
+```
+
+* `--show-origin` tells you *which file* is setting it (global vs local).
+
+### B) Set the identity you want
+
+If you want `cat-cols` everywhere (recommended):
+
+```bash
+git config --global user.name "cat-cols"
+git config --global user.email "YOUR_CATCOLS_EMAIL@example.com"
+```
+
+If you want it only for this repo:
+
+```bash
+git config --local user.name "cat-cols"
+git config --local user.email "YOUR_CATCOLS_EMAIL@example.com"
+```
+
+### C) Remove any repo-level `splinter6` override (common gotcha)
+
+If your repo has local config pinned to `splinter6`, delete those keys:
+
+```bash
+git config --local --unset user.name
+git config --local --unset user.email
+```
+
+Then re-set them correctly (as above) if you need local-only.
+
+### D) Add a “tripwire” so you *can’t* accidentally commit as `splinter6`
+
+This makes git refuse commits if name/email isn’t set correctly:
+
+```bash
+git config --global user.useConfigOnly true
+```
+
+Now Git won’t fall back to some random OS/user guess.
+
+---
+
+## 2) Remove saved credentials tied to `splinter6` (so pushes/auth don’t “snap back”)
+
+This depends on how you authenticate.
+
+### If you use HTTPS (GitHub token login)
+
+Check for a git credential helper:
+
+```bash
+git config --global credential.helper
+git config --system credential.helper
+```
+
+On macOS it’s commonly **Keychain**. To remove saved GitHub credentials from keychain:
+
+* Open **Keychain Access**
+* Search: `github.com`
+* Delete entries that correspond to the wrong account/token
+
+If you prefer command line, you *can* erase via git’s credential plumbing, but it’s fiddly. Keychain is faster and more reliable on macOS.
+
+Then re-auth the next time you push (it should prompt you and you use the `cat-cols` token).
+
+### If you use SSH
+
+SSH identity is determined by which key is used.
+
+Check your remotes:
+
+```bash
+git remote -v
+```
+
+* If it looks like `git@github.com:...` you’re using SSH.
+
+List keys:
+
+```bash
+ls -al ~/.ssh
+```
+
+Check what key GitHub sees:
+
+```bash
+ssh -T git@github.com
+```
+
+If it says you’re authenticated as the wrong account, fix your SSH config:
+
+```bash
+nano ~/.ssh/config
+```
+
+Example pattern:
+
+```sshconfig
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519_catcols
+  IdentitiesOnly yes
+```
+
+Then load the right key:
+
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519_catcols
+```
+
+---
+
+## 3) Remove `splinter6` from Windsurf itself
+
+Windsurf typically has:
+
+* a signed-in account for the editor
+* and git integration credentials
+
+Inside Windsurf settings, look for:
+
+* **Accounts** / **GitHub** integration
+* Remove/disconnect the `splinter6` connection
+* Connect `cat-cols`
+
+Even if you do this, **Git config + credential store** still matters, so do sections 1–2 regardless.
+
+---
+
+## 4) Optional: purge/replace old commits authored as `splinter6`
+
+If you already committed under `splinter6` and you want the repo to *never contain that identity*:
+
+### Option A (recommended tool): `git filter-repo`
+
+Install:
+
+```bash
+brew install git-filter-repo
+```
+
+Then rewrite author/committer info:
+
+```bash
+git filter-repo --mailmap <(cat <<'EOF'
+splinter6 <OLD_EMAIL@example.com> cat-cols <NEW_EMAIL@example.com>
+<OLD_EMAIL@example.com> <NEW_EMAIL@example.com>
+EOF
+)
+```
+
+This rewrites history. After that you must force-push:
+
+```bash
+git push --force --all
+git push --force --tags
+```
+
+**Warning:** this changes commit SHAs; anyone else using the repo will need to re-clone or reset.
+
+### Option B: leave history alone
+
+Totally valid if this is a personal repo and you don’t care about old commits showing `splinter6`.
+
+---
+
+## 5) Quick verification (make sure you’re “clean”)
+
+Before committing:
+
+```bash
+git config user.name
+git config user.email
+```
+
+Make a test commit and inspect it:
+
+```bash
+git commit --allow-empty -m "identity test"
+git log -1 --pretty=full
+```
+
+You should see `Author: cat-cols <...>` and `Commit: cat-cols <...>`.
+
+---
+
+💡💡 **Best practice:** Use **one email** for GitHub commits (the one attached to `cat-cols`), and set it globally. Then keep SSH keys/tokens per-account and explicitly map them in `~/.ssh/config` or Keychain so nothing “helpfully” flips back.
+
+If you paste the output of `git config --show-origin --get user.name` and `git config --show-origin --get user.email` (and `git remote -v`), I can tell you exactly where `splinter6` is leaking in from and the minimal commands to nuke it.
+
+># **Q**
+> I think I had previously set up splinter6 using ssh keys/tokens. or on a mac keychain
+
+Cool — that’s exactly the “it keeps snapping back” combo: **SSH key selection** + **macOS Keychain tokens**. Here’s the clean, deterministic way to evict `splinter6` from both.
+
+## 1) First, identify whether this repo uses SSH or HTTPS
+
+In the repo:
+
+```bash
+git remote -v
+```
+
+* `git@github.com:...` → SSH (keys matter)
+* `https://github.com/...` → HTTPS (Keychain/token matters)
+
+You can have *both* issues if you’ve used both styles over time.
+
+---
+
+## 2) If you’re using SSH: force the repo to use the `cat-cols` key
+
+### A) See what GitHub account your current SSH auth resolves to
+
+Run:
+
+```bash
+ssh -T git@github.com
+```
+
+If it says you’re authenticated as the wrong user, you need to pin the right key.
+
+### B) Check what keys are currently loaded into your SSH agent
+
+```bash
+ssh-add -l
+```
+
+If you see multiple keys, one may belong to `splinter6`. You can wipe the agent’s loaded keys:
+
+```bash
+ssh-add -D
+```
+
+Then add only your `cat-cols` key:
+
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519_catcols
+```
+
+(Replace that filename with your actual key path.)
+
+### C) Pin GitHub to a specific key in `~/.ssh/config` (this is the “never again” move)
+
+Open config:
+
+```bash
+nano ~/.ssh/config
+```
+
+Add:
+
+```sshconfig
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519_catcols
+  IdentitiesOnly yes
+```
+
+Then test again:
+
+```bash
+ssh -T git@github.com
+```
+
+### D) If you *need* both accounts sometimes
+
+Don’t fight `github.com` directly. Use two hosts:
+
+```sshconfig
+Host github-catcols
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519_catcols
+  IdentitiesOnly yes
+
+Host github-splinter6
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519_splinter6
+  IdentitiesOnly yes
+```
+
+Then set this repo remote to the cat-cols host:
+
+```bash
+git remote set-url origin git@github-catcols:OWNER/REPO.git
+```
+
+That makes it physically impossible for `splinter6` to authenticate on this repo.
+
+---
+
+## 3) If you’re using HTTPS: purge `splinter6` tokens from macOS Keychain
+
+### A) Confirm you’re using Keychain as credential helper
+
+```bash
+git config --global credential.helper
+```
+
+If it shows `osxkeychain`, Git will pull cached tokens from Keychain.
+
+### B) Delete GitHub credentials from Keychain
+
+1. Open **Keychain Access**
+2. Search for: `github.com`
+3. Look for entries like:
+
+   * `internet password` for `github.com`
+   * or tokens created by tools (sometimes “GitHub”, “gh”, etc.)
+4. Delete the ones tied to `splinter6` (or just delete all GitHub entries if you’re fine re-authing cleanly)
+
+Next push will prompt again and you use the `cat-cols` token.
+
+### C) Also check GitHub CLI (gh) if you’ve used it
+
+```bash
+gh auth status
+```
+
+If it shows `splinter6`, switch/logout and re-login:
+
+```bash
+gh auth logout
+gh auth login
+```
+
+(Choose the `cat-cols` account.)
+
+---
+
+## 4) Remove any stored identity at the Git layer (author/email)
+
+Even if auth is fixed, you still don’t want commits authored as `splinter6`:
+
+```bash
+git config --global user.name "cat-cols"
+git config --global user.email "YOUR_CATCOLS_EMAIL@example.com"
+git config --global user.useConfigOnly true
+```
+
+And check repo-local overrides:
+
+```bash
+git config --local --get user.name
+git config --local --get user.email
+```
+
+If those return `splinter6`, delete them:
+
+```bash
+git config --local --unset user.name
+git config --local --unset user.email
+```
+
+---
+
+## 5) Quick “prove it” test (auth + identity)
+
+**Identity in commits:**
+
+```bash
+git commit --allow-empty -m "identity test"
+git log -1 --pretty=full
+```
+
+**Auth to GitHub:**
+
+* SSH repos: `ssh -T git@github.com`
+* HTTPS repos: do a `git push` once and confirm the login prompt aligns with `cat-cols`
+
+---
+
+💡💡 **Most bulletproof setup (recommended):** use SSH with the `github-catcols` host alias per above, and point *only this repo* at that host. Then even if your machine has old `splinter6` keys/tokens lurking in the shadows, this repo can’t use them.
+
+If you want a fast surgical strike: run `git remote -v`, `ssh -T git@github.com`, and `ssh-add -l` and use the outputs to decide which branch (SSH vs Keychain vs both) is actually causing the `splinter6` bleed-through.
