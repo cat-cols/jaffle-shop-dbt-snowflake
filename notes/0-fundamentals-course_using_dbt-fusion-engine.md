@@ -105,12 +105,78 @@ Sections:
 ># 2. Analytics Dev Lifecycle
 - dbt & ADLC
 
+---
+
 ># 3. set up dbt in 60min
 
-># 4. Building your first model
+Learning Objectives
+Load training data into your data platform
+Set up your warehouse and repository connections.
+Navigate the dbt platform.
+Complete a simple development workflow in dbt Studio
+
+---
+Access Your Company's dbt Account
+Your organization’s dbt implementation is integrated with at least one data platform and a git provider. Follow these instructions if you are joining an existing dbt account that has already been setup by your company’s dbt administrator.
+
+Setting Up dbt for Developers
+You will need your organization’s sign in method, and you will need the right roles, permissions, and credentials in multiple systems to carry out your work in dbt. Use one of our mini courses for developers to set up your individual account:
+
+dbt and Snowflake for developers
+https://learn.getdbt.com/courses/dbt-cloud-and-snowflake-for-developers
+dbt and Databricks for developers
+https://learn.getdbt.com/courses/dbt-cloud-and-databricks-for-developers
+dbt and Redshift for developers
+https://learn.getdbt.com/courses/dbt-cloud-and-redshift-for-developers
+dbt Cloud and BigQuery for developers
+https://learn.getdbt.com/courses/dbt-cloud-and-bigquery-for-developers
+
+⚠️  Note: The data for BQ is in a public dataset so keep in mind you just need to use these statements:
+
+select * from `dbt-tutorial.jaffle_shop.customers`
+select * from `dbt-tutorial.jaffle_shop.orders`
+select * from `dbt-tutorial.stripe.payment`
+
+---
+># QUIZ
+
+>1. When working in dbt, which one of the following should always be unique for each dbt developer when working in development?
+
+a.
+Data platform
+b.
+Git repository
+c.
+Target schema [x]
+d.
+dbt project name
+
+> 2. Which one of the following is a true statement about dbt connections?
+
+a.
+Data is stored in the data platform and code is stored in dbt
+b.
+Data is stored in dbt and code is stored in the git repository
+c.
+Data is stored in the data platform and code is stored in the git repository [x]
+d.
+Data and code are both stored in dbt
+
+3. Which of the following is true about version control with git in dbt?
+
+a. When making changes to a development branch, you will impact models running in production
+b. Only one developer can work on a single development branch at a time
+c. [x] Separate branches allow dbt developers to simultaneously work on the same code base without impacting production
+d. You have to update the code base to match the environment you are in
 
 ---
 ---
+
+># 4. Models
+
+---
+
+> Building your first model
 
 >## A. Learning objectives
 - Explain what models are in a dbt project.
