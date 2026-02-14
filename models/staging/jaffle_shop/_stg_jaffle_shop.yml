@@ -1,0 +1,43 @@
+models:
+  - name: stg_jaffle_shop__customers
+    description: The grain of this table is one unique customer per row
+    columns:
+      - name: customer_id
+        description: This is the PK for customers table
+        data_tests:
+          - unique
+          - not_null
+      - name: first_name
+      - name: last_name.  # should I keep or remove first_name, last name?
+
+  - name: stg_jaffle_shop__orders
+    description: One order per row
+    columns:
+      - name: order_id
+        description: This is the PK for the orders table
+        data_tests:
+          - unique
+          - not_null
+      - name: order_status
+        description: "{{ doc('order_status') }}" # note the order of syntax. must include space between.
+        data_tests:
+          - accepted_values: 
+              arguments: # new vers. adds: 'arguments'
+               values:   # removing any of these will make the test for dbt build --select +dim_customers fail
+                 - completed
+                 - shipped
+                 - placed
+                 - return_pending
+                 - returned
+      - name: customer_id
+        data_tests:
+          - relationships:
+              arguments: #
+                to: ref('stg_jaffle_shop__customers')
+                field: customer_id
+      - name: order_date
+        data_tests:
+          - not_null
+      - name: _etl_loaded_at
+        data_tests:
+          - not_null

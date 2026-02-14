@@ -1,0 +1,31 @@
+version: 2
+
+sources:
+  - name: jaffle_shop
+    database: raw
+    schema: jaffle_shop
+    config:
+        freshness:
+          warn_after:
+            count: 12
+            period: hour
+          error_after:
+            count: 1
+            period: day
+        loaded_at_field: _etl_loaded_at
+    tables:
+      - name: customers
+        columns:
+          - name: id # since we are testing the raw data, its still called `id` in warehosue.
+            data_tests:
+              - unique
+              - not_null   
+        config:
+          freshness: null
+
+      - name: orders
+        columns:
+          - name: id
+            data_tests:
+              - unique
+              - not_null
