@@ -5,7 +5,8 @@
 - git remote -v
 - git pull origin main --rebase
 - git push --set-upstream origin main
-- ls -R
+- git push origin main --force
+  - ls -R
 
 ---
 ---
@@ -315,3 +316,194 @@ In Windsurf, look at the left-hand sidebar for the **Source Control icon** (the 
 * Once you push, those changes will finally appear on your GitHub profile.
 
 **Try Option A first! If you get a "Merge Conflict" after the `pull --rebase`, don't worry—Windsurf makes it very easy to pick which code to keep.** Which one did you go with?
+
+---
+
+You are in the "final boss" stage of Git setup: **The Merge Conflict.**
+
+This happened because both your iMac and GitHub (via dbt Cloud) created their own versions of `.gitignore` and `README.md`. Git doesn't know which one you want to keep, so it’s asking you to choose.
+
+Since you are using **Windsurf**, this is actually very easy to fix.
+
+### 1. Fix the Conflicts in Windsurf
+
+Look at your file sidebar in Windsurf. You’ll see `.gitignore` and `README.md` highlighted (usually in purple or red) with a little **"C"** next to them.
+
+1. **Open `.gitignore`:** You will see code like this:
+```text
+<<<<<<< HEAD
+(Your iMac version)
+=======
+(The GitHub/dbt Cloud version)
+>>>>>>> 82efb32... upload and merge?
+
+```
+
+
+2. **Choose:** Delete the markers (`<<<<`, `====`, `>>>>`) and keep the text from **both** lists (it’s safer to have all the ignore rules).
+3. **Open `README.md`:** Do the same. Keep the version that looks more complete (usually the one you wrote).
+4. **Save both files.**
+
+---
+
+### 2. Tell Git the "Conflict is Over"
+
+Once the files are saved and look clean, run these commands in your Windsurf terminal:
+
+```bash
+# 1. Mark the files as fixed
+git add .gitignore README.md
+
+# 2. Continue the rebase (this is better than committing)
+git rebase --continue
+
+```
+
+*If it asks you to save a commit message, just press `Ctrl + X` (or follow the on-screen instructions to exit the editor).*
+
+---
+
+### 3. Push to GitHub
+
+Now that the conflict is resolved, you can finally sync everything:
+
+```bash
+git push origin main
+
+```
+
+---
+
+### Why this is a great "Portfolio Story"
+
+If a lead engineer ever asks you during an interview, *"Tell me about a technical challenge you faced,"* you can talk about this!
+
+* **The Situation:** You were migrating a managed dbt Cloud repository to a local development environment.
+* **The Problem:** You hit a non-fast-forward merge conflict on the configuration files.
+* **The Resolution:** You performed a `git rebase`, manually resolved the conflicts in your IDE, and unified the repository history.
+
+**That is exactly what professional Analytics Engineers do daily.**
+
+### Final Check
+
+Once you run `git push`, refresh your GitHub page. You should see:
+
+1. **All your folders** (`models`, `seeds`, etc.) right on the front page.
+2. **No more `jaffle_shop` subfolder.**
+3. **A clean, green "Status"** on your GitHub contribution graph.
+
+**Did the `git rebase --continue` command finish without throwing any more errors?**
+
+---
+---
+> **Q:** (venv) b@Brandons-iMac jaffle-shop-dbt-snowflake % git commit -m "merging dbt cloud with 
+local windsurf development" 
+[detached HEAD f276df9] merging dbt cloud with local windsurf development
+ 32 files changed, 4727 insertions(+), 1 deletion(-)
+ create mode 100644 docs/images/Screen Shot 2026-02-10 at 12.18.22 PM.png
+ create mode 100644 docs/images/Screen Shot 2026-02-13 at 7.39.00 AM.png
+ create mode 100644 docs/images/image.png
+ create mode 100644 docs/my-notes_0-fundamentals-course_using_dbt-fusion-engine.md
+ create mode 100644 docs/my-notes_1-merge_windsurf.md
+ create mode 100644 macros/macros/cents_to_dollars.sql
+ create mode 100644 models/models/marts/customers.sql
+ create mode 100644 models/models/marts/customers.yml
+ create mode 100644 models/models/marts/locations.sql
+ create mode 100644 models/models/marts/order_items.sql
+ create mode 100644 models/models/marts/order_items.yml
+ create mode 100644 models/models/marts/orders.sql
+ create mode 100644 models/models/marts/orders.yml
+ create mode 100644 models/models/marts/products.sql
+ create mode 100644 models/models/marts/supplies.sql
+ create mode 100644 models/models/staging/__sources.yml
+ create mode 100644 models/models/staging/stg_customers.sql
+ create mode 100644 models/models/staging/stg_customers.yml
+ create mode 100644 models/models/staging/stg_locations.sql
+ create mode 100644 models/models/staging/stg_locations.yml
+ create mode 100644 models/models/staging/stg_order_items.sql
+ create mode 100644 models/models/staging/stg_order_items.yml
+ create mode 100644 models/models/staging/stg_orders.sql
+ create mode 100644 models/models/staging/stg_orders.yml
+ create mode 100644 models/models/staging/stg_products.sql
+ create mode 100644 models/models/staging/stg_products.yml
+ create mode 100644 models/models/staging/stg_supplies.sql
+ create mode 100644 models/models/staging/stg_supplies.yml
+ create mode 100644 quick-start.md
+
+> **A:**
+>  WHOOPS! unstage issue of `models folders inside models folders` etc. 
+>
+> how do i unstage the folders inside folders?
+
+Since you've already committed those "folder-in-folder" changes, we aren't just unstaging; we are performing a **restructuring**. You need to move the files to their correct homes and then tell Git to forget the old, nested paths.
+
+Here is the fastest way to clean this up in your Windsurf terminal:
+
+### 1. Move the Files (The "Flattening")
+
+We want to move everything from the "inner" folders to the "outer" folders. Run these commands one by one:
+
+```bash
+# Move contents from models/models/ to models/
+mv models/models/* models/ 2>/dev/null
+
+# Move contents from macros/macros/ to macros/
+mv macros/macros/* macros/ 2>/dev/null
+
+```
+
+### 2. Remove the empty nested folders
+
+Now that the files are moved, the redundant folders are empty. Delete them:
+
+```bash
+rmdir models/models
+rmdir macros/macros
+
+```
+
+### 3. "Unstage" and Update Git
+
+Now we need to tell Git to stop looking for the old paths and start tracking the new ones.
+
+```bash
+# Stage all changes (Git will see the 'moves' automatically)
+git add .
+
+# Overwrite your previous 'messy' commit with this clean one
+git commit --amend -m "Fix: Flatten nested directory structure"
+
+```
+
+---
+
+### 4. Push the Clean Version
+
+Because we "amended" the commit (rewrote history to make it cleaner), you'll need to push with force to update GitHub:
+
+```bash
+git push origin main --force
+
+```
+
+---
+
+### How to verify it worked in Windsurf
+
+Look at your file tree on the left of Windsurf. It should look like a **standard dbt project**:
+
+* **models/**
+* **marts/** (directly inside)
+* **staging/** (directly inside)
+
+
+* **macros/**
+* `cents_to_dollars.sql` (directly inside)
+
+* `dbt_project.yml`
+
+### Why this is better than just "unstaging"
+
+If you just unstaged them, the files would still be sitting in the wrong place on your iMac. By moving them and using `git commit --amend`, you are essentially "erasing" the mistake from your GitHub history. To a recruiter, it will look like you did it perfectly the first time!
+
+**Does your Windsurf file tree look "flat" now (no more double folders)?** If it does, you're ready to go back to dbt Cloud and hit "Run."
