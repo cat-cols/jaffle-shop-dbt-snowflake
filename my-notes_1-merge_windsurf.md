@@ -1084,3 +1084,169 @@ git log -1 --pretty=full
 💡💡 **Most bulletproof setup (recommended):** use SSH with the `github-catcols` host alias per above, and point *only this repo* at that host. Then even if your machine has old `splinter6` keys/tokens lurking in the shadows, this repo can’t use them.
 
 If you want a fast surgical strike: run `git remote -v`, `ssh -T git@github.com`, and `ssh-add -l` and use the outputs to decide which branch (SSH vs Keychain vs both) is actually causing the `splinter6` bleed-through.
+
+---
+---
+
+It did two things — one was purely “Git bookkeeping,” the other was the actual upload.
+
+### 1) The first `git push` failed because your branch wasn’t “tracking” a remote branch yet
+
+Git was basically saying:
+
+> “I see you’re on `main`, but I don’t know *which* remote branch `main` should push to by default.”
+
+That’s what “no upstream branch” means: **your local `main` didn’t have an upstream (tracking) branch configured**.
+
+### 2) `git push --set-upstream origin main` did:
+
+#### A) **Pushed your local `main` commits to the remote `origin`**
+
+You can see that in:
+
+* `To https://github.com/cat-cols/jaffle-shop-dbt-snowflake.git`
+* `main -> main`
+* `2cdecad..4fb1102` (your remote `main` moved from commit `2cdecad` to `4fb1102`)
+
+So yes: it uploaded your latest changes to GitHub.
+
+#### B) **Set the upstream (tracking) branch**
+
+This line is the key:
+
+* `branch 'main' set up to track 'origin/main'.`
+
+Meaning from now on, when you run:
+
+```bash
+git push
+```
+
+Git assumes:
+
+* push `main` → `origin/main`
+
+And similarly, `git pull` knows where to pull from.
+
+### Why did it use HTTPS here, not SSH?
+
+Notice it pushed to:
+
+`https://github.com/cat-cols/jaffle-shop-dbt-snowflake.git`
+
+So this repo is currently configured with an **HTTPS remote**, which means **Keychain/token credentials can matter** for push/pull (even though your SSH auth test to GitHub is fine).
+
+If you want to use SSH instead (often cleaner for multi-account setups), you can switch the remote to SSH:
+
+```bash
+git remote set-url origin git@github.com:cat-cols/jaffle-shop-dbt-snowflake.git
+```
+
+Then confirm:
+
+```bash
+git remote -v
+```
+
+### How to verify tracking is now set
+
+```bash
+git status -sb
+```
+
+You should see something like:
+
+`## main...origin/main`
+
+That’s the tracking relationship.
+
+💡💡 Small but powerful: if your goal is “never accidentally authenticate as splinter6,” switching this repo to **SSH** (and pinning the key) removes Keychain from the equation entirely for git operations.
+
+---
+---
+
+It did two things — one was purely “Git bookkeeping,” the other was the actual upload.
+
+### 1) The first `git push` failed because your branch wasn’t “tracking” a remote branch yet
+
+Git was basically saying:
+
+> “I see you’re on `main`, but I don’t know *which* remote branch `main` should push to by default.”
+
+That’s what “no upstream branch” means: **your local `main` didn’t have an upstream (tracking) branch configured**.
+
+### 2) `git push --set-upstream origin main` did:
+
+#### A) **Pushed your local `main` commits to the remote `origin`**
+
+You can see that in:
+
+* `To https://github.com/cat-cols/jaffle-shop-dbt-snowflake.git`
+* `main -> main`
+* `2cdecad..4fb1102` (your remote `main` moved from commit `2cdecad` to `4fb1102`)
+
+So yes: it uploaded your latest changes to GitHub.
+
+#### B) **Set the upstream (tracking) branch**
+
+This line is the key:
+
+* `branch 'main' set up to track 'origin/main'.`
+
+Meaning from now on, when you run:
+
+```bash
+git push
+```
+
+Git assumes:
+
+* push `main` → `origin/main`
+
+And similarly, `git pull` knows where to pull from.
+
+### Why did it use HTTPS here, not SSH?
+
+Notice it pushed to:
+
+`https://github.com/cat-cols/jaffle-shop-dbt-snowflake.git`
+
+So this repo is currently configured with an **HTTPS remote**, which means **Keychain/token credentials can matter** for push/pull (even though your SSH auth test to GitHub is fine).
+
+If you want to use SSH instead (often cleaner for multi-account setups), you can switch the remote to SSH:
+
+```bash
+git remote set-url origin git@github.com:cat-cols/jaffle-shop-dbt-snowflake.git
+```
+
+Then confirm:
+
+```bash
+git remote -v
+```
+
+### How to verify tracking is now set
+
+```bash
+git status -sb
+```
+
+You should see something like:
+
+`## main...origin/main`
+
+That’s the tracking relationship.
+
+💡💡 Small but powerful: if your goal is “never accidentally authenticate as splinter6,” switching this repo to **SSH** (and pinning the key) removes Keychain from the equation entirely for git operations.
+
+```sh
+(venv) b@Brandons-iMac jaffle-shop-dbt-snowflake % git remote set-url origin git@github.com:cat-cols/jaffle-shop-dbt-snowflake.git
+
+(venv) b@Brandons-iMac jaffle-shop-dbt-snowflake % git remote -v
+
+origin  git@github.com:cat-cols/jaffle-shop-dbt-snowflake.git (fetch)
+origin  git@github.com:cat-cols/jaffle-shop-dbt-snowflake.git (push)
+(venv) b@Brandons-iMac jaffle-shop-dbt-snowflake % git status -sb
+
+## main...origin/main
+```
