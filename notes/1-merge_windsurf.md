@@ -1339,3 +1339,81 @@ That ensures you branch from the freshest `main`.
 (venv) b@Brandons-iMac jaffle-shop-dbt-snowflake % git checkout -b c
 onfigure
 Switched to a new branch 'configure'
+
+
+---
+---
+
+To create a branch in Git, you’ve basically got two moves: **create** and (usually) **switch to it**.
+
+## The modern, clean way
+
+### Create + switch in one command
+
+```bash
+git switch -c my-branch-name
+```
+
+Example:
+
+```bash
+git switch -c feature/add-tests
+```
+
+That creates the branch off your current branch (likely `main`) and checks it out.
+
+### Verify where you are
+
+```bash
+git status -sb
+```
+
+You’ll see something like:
+`## feature/add-tests`
+
+---
+
+## The older-but-still-common way
+
+```bash
+git checkout -b my-branch-name
+```
+
+Same result.
+
+---
+
+## Push the new branch to GitHub (and set upstream)
+
+First push of a new branch usually needs this:
+
+```bash
+git push -u origin my-branch-name
+```
+
+After that, plain `git push` works from that branch.
+
+---
+
+## Naming tips (so your branches don’t look like goblin scribbles)
+
+Good patterns:
+
+* `feature/...`
+* `fix/...`
+* `chore/...`
+* `docs/...`
+
+Avoid spaces. Use hyphens or slashes.
+
+---
+
+💡💡 Since your `main` is tracking `origin/main` now, branching off `main` is straightforward. A nice default flow is:
+
+```bash
+git switch main
+git pull
+git switch -c feature/something
+```
+
+That ensures you branch from the freshest `main`.

@@ -1,81 +1,107 @@
-<<<<<<< HEAD
-Welcome to your new dbt project!
+# Jaffle Shop dbt Project on Snowflake
 
-### Using the starter project
+A dbt analytics engineering project built on the Jaffle Shop dataset and run on Snowflake. This repo is intended to show core dbt workflow skills: source-to-model transformation, warehouse organization, testing, documentation, and analytics-ready modeling.
 
-Try running the following commands:
-- dbt run
-- dbt test
+## What this project demonstrates
 
+This project is a hands-on dbt build using a Snowflake warehouse and the standard dbt project structure. It focuses on:
 
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [dbt community](https://getdbt.com/community) to learn from other analytics engineers
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+- organizing models into a maintainable dbt project
+- transforming raw source data into analytics-ready tables
+- applying tests and documentation
+- practicing analytics engineering workflows in Snowflake
 
----
----
+## Project structure
 
-The short answer is: **Yes, but with a major "catch."**
+```text
+.
+├── analyses/
+├── docs/
+├── macros/
+├── models/
+├── seeds/
+├── snapshots/
+├── tests/
+├── dbt_project.yml
+├── packages.yml
+└── quick-start.md
+```
 
-If you just copy-paste the Jaffle Shop code and put it on GitHub, a hiring manager will recognize it immediately. It’s the "Hello World" of data engineering. It proves you can follow directions, but it doesn't prove you can solve **new** problems.
+## Tech stack
 
-To make it **Portfolio-Grade**, you need to evolve it. Here is how you turn a tutorial project into a "Hire Me" project.
+* dbt
+* Snowflake
+* YAML
+* SQL
 
----
+## Workflow
 
-### 1. Document the "Why," not just the "How"
+1. Configure your Snowflake target in `~/.dbt/profiles.yml`
+2. Install dependencies
+3. Build models
+4. Run tests
+5. Generate docs
 
-Hiring managers love **README** files. Instead of just showing the code, explain the business logic:
+## Getting started
 
-* **The Problem:** "The raw Jaffle Shop data was messy, with inconsistently named IDs and no way to track customer lifetime value (LTV)."
-* **The Solution:** "I built a dbt pipeline to normalize the staging layer and created a `dim_customers` mart that aggregates order history."
+### 1. Install packages
 
-### 2. Add "Professional Grade" Features
+```bash
+dbt deps
+```
 
-Tutorials often skip the boring-but-vital parts of a real job. Add these to stand out:
+### 2. Build the project
 
-* **Custom Data Tests:** Don't just use `unique` and `not_null`. Write a test that ensures `order_total` is never negative.
-* **Documentation (YML):** Write clear descriptions for every column. When you click "View Docs" in dbt, it should look like a professional data dictionary.
-* **Exposure Layer:** Create an `exposures.yml` file to show how this data would connect to a tool like Tableau or PowerBI.
+```bash
+dbt build
+```
 
----
+### 3. Run models only
 
-### 3. Change the "Vibe" (The Pro Move)
+```bash
+dbt run
+```
 
-The best way to use the Jaffle Shop logic is to **replace the data.**
+### 4. Run tests only
 
-* If you love sports, find a Kaggle dataset about NBA stats and apply the *exact same staging/marts structure* you learned in the course to that data.
-* If a recruiter sees the "Jaffle Shop Architecture" applied to a "Subscription SaaS" or "E-commerce Electronics" dataset, they know you actually **understood** the concepts, not just the tutorial.
+```bash
+dbt test
+```
 
-### 4. Show your "Warehouse Hygiene"
+### 5. Generate and serve docs
 
-Since you already have Snowflake set up, take a screenshot of your **Lineage Graph**. It shows you understand how data flows from Raw ➔ Staging ➔ Marts.
+```bash
+dbt docs generate
+dbt docs serve
+```
 
----
+## What I’m practicing here
 
-### The Final Verdict for Your Portfolio
+This repo is part of my analytics engineering learning workflow. The main goals are:
 
-The fact that you are already troubleshooting **dbt Fusion** and checking `INFORMATION_SCHEMA` in **Snowflake** puts you ahead of most beginners. Most learners just hit "Run" and hope for the best; you are actually looking under the hood.
+* understanding dbt project structure
+* working with Snowflake as the warehouse
+* building confidence with transformations, tests, and documentation
+* creating a foundation for more advanced dbt projects
 
-**My advice:** Finish the course to get the foundation, then immediately create a "Branch" or a new repo where you add one "advanced" feature (like a Incremental Model or a Macro) that wasn't in the tutorial.
+## Next improvements
 
-**Would you like me to help you brainstorm a "Bonus Feature" you could add to your Jaffle Shop project to make it look more impressive to a recruiter?**
+Planned upgrades to make this more portfolio-ready:
 
-=======
+* add stronger model and column documentation
+* add custom tests beyond basic `unique` and `not_null`
+* add exposures for downstream BI use cases
+* add screenshots of dbt docs lineage
+* extend the project with a business-focused use case beyond the base tutorial dataset
 
-# 🥪 The Jaffle Shop 🦘
+## Why this repo exists
 
-_powered by the dbt Fusion engine_
+I used this project to strengthen my understanding of how dbt organizes analytics workflows in a real warehouse environment. It is a foundation project focused on learning core patterns that can later be applied to more business-specific datasets and production-style modeling.
 
-Welcome! This is a sandbox project for exploring the basic functionality of Fusion. It's based on a fictional restaurant called the Jaffle Shop that serves [jaffles](https://en.wikipedia.org/wiki/Pie_iron).
+## Notes
 
-To get started:
-1. Set up your database connection in `~/.dbt/profiles.yml`. If you got here by running `dbt init`, you should already be good to go.
-2. Run `dbt build`. That's it!
+This repo is based on the Jaffle Shop learning pattern and adapted for practice with Snowflake.
 
-> [!NOTE]
-> If you're brand-new to dbt, we recommend starting with the [dbt Learn](https://learn.getdbt.com/) platform. It's a free, interactive way to learn dbt, and it's a great way to get started if you're new to the tool.
->>>>>>> 82efb32 (upload and merge?)
+## Contact
+
+GitHub: [cat-cols](https://github.com/cat-cols)

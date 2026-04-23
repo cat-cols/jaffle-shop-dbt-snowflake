@@ -6,7 +6,7 @@ with customers as (
 
 orders as (
 
-    /* IMPORTANT: Switch from 'stg_jaffle_shop__orders' > 'fct_orders' 
+    /* IMPORTANT: Switch from 'stg_jaffle_shop__orders' > 'fct_orders'
     bc: fct_orders has the 'amount' field we need for LTV. */
 
     select * from {{ ref('fct_orders') }}
